@@ -12,6 +12,7 @@ ShortcutKit records local keyboard input and registers global shortcuts. Build t
 - **Saved shortcuts.** Define shortcuts by name and store changes in `UserDefaults`.
 - **In-memory shortcuts.** Register a `Shortcut` directly without saving it.
 - **Key-down and key-up.** Handle a shortcut once, or react while it is held.
+- **Conflict checks.** Check enabled macOS shortcuts and app menus before saving.
 - **Keyboard layouts.** Use fixed US English labels or the current macOS input source.
 - **More keyboard types.** ANSI, ISO, and JIS keys have correct typed values and labels.
 
@@ -87,6 +88,20 @@ let shortcut = Shortcuts.shortcut(for: .togglePanel)
 - `.unavailable` when the shortcut is already used.
 - `.invalidShortcut` when the shortcut cannot be registered.
 - `.system(status:)` for an unexpected macOS error.
+
+## Check conflicts
+
+Check enabled macOS shortcuts and the app's main menu before saving:
+
+```swift
+if let conflict = ShortcutValidator.conflict(for: shortcut) {
+    showConflict(conflict)
+} else {
+    try Shortcuts.set(shortcut, for: .togglePanel)
+}
+```
+
+The result is `.system` or `.menuItem(title:)`. Use `conflict(for:in:)` to check a specific menu, or pass `nil` to check only macOS shortcuts. Menu checks include submenus.
 
 ## In-memory shortcuts
 
@@ -179,6 +194,7 @@ Use `components(for:)` when your UI draws separate keycaps.
 
 - Recording works while the app is active.
 - macOS or another app may consume a shortcut before local recording sees it. Finding these intercepted shortcuts would require Input Monitoring permission.
+- System conflict checks cover enabled shortcuts from System Settings, not shortcuts registered by other apps.
 - Global shortcuts treat left and right modifier keys as the same modifier.
 
 ## Example app

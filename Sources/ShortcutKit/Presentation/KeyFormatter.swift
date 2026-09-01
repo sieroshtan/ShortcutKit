@@ -149,10 +149,16 @@ public struct KeyFormatter: Sendable {
     }
 
     private func translatedString(for key: Key) -> String? {
-        guard let source = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue(),
-              let property = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData)
-        else { return nil }
+        guard let source = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue() else {
+            return nil
+        }
+        return Self.translatedString(for: key, using: source)
+    }
 
+    static func translatedString(for key: Key, using source: TISInputSource) -> String? {
+        guard let property = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData) else {
+            return nil
+        }
         let data = unsafeBitCast(property, to: CFData.self)
         guard let bytes = CFDataGetBytePtr(data) else { return nil }
         let layout = UnsafeRawPointer(bytes).assumingMemoryBound(to: UCKeyboardLayout.self)
