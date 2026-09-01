@@ -1,0 +1,35 @@
+name: Swift
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Swift 5.10
+            os: macos-14
+            developer_dir: /Applications/Xcode_15.4.app/Contents/Developer
+            flags: ""
+          - name: Swift 6+
+            os: macos-latest
+            developer_dir: /Applications/Xcode.app/Contents/Developer
+            flags: "-Xswiftc -swift-version -Xswiftc 6"
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      DEVELOPER_DIR: ${{ matrix.developer_dir }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: Build and test
+        run: swift test -v -Xswiftc -warnings-as-errors ${{ matrix.flags }}
