@@ -135,6 +135,7 @@ public struct KeyFormatter: Sendable {
         self.layout = layout
     }
 
+    @MainActor
     public func string(for key: Key) -> String {
         if let label = Self.specialKeys[key] {
             return label
@@ -148,6 +149,7 @@ public struct KeyFormatter: Sendable {
         }
     }
 
+    @MainActor
     private func translatedString(for key: Key) -> String? {
         guard let source = TISCopyCurrentKeyboardLayoutInputSource()?.takeRetainedValue() else {
             return nil
@@ -155,6 +157,7 @@ public struct KeyFormatter: Sendable {
         return Self.translatedString(for: key, using: source)
     }
 
+    @MainActor
     static func translatedString(for key: Key, using source: TISInputSource) -> String? {
         guard let property = TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData) else {
             return nil

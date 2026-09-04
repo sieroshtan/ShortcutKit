@@ -31,6 +31,7 @@ final class ModelTests: XCTestCase {
         )
     }
 
+    @MainActor
     func testSpecialKeyFormatting() {
         let formatter = KeyFormatter()
         XCTAssertEqual(formatter.string(for: .k), "K")
@@ -350,9 +351,9 @@ final class RecordingTests: XCTestCase {
 private final class TestMonitor: KeyboardEventMonitoring {
     var didStart = false
     var didStop = false
-    private var handler: ((NSEvent) -> Void)?
+    private var handler: (@MainActor (NSEvent) -> Void)?
 
-    func start(handler: @escaping (NSEvent) -> Void) {
+    func start(handler: @escaping @MainActor (NSEvent) -> Void) {
         didStart = true
         self.handler = handler
     }

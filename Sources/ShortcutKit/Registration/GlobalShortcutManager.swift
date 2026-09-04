@@ -14,7 +14,7 @@ final class GlobalShortcutManager {
     private struct Registration {
         let shortcut: Shortcut
         var ref: EventHotKeyRef?
-        let action: (ShortcutPhase) -> Void
+        let action: @MainActor (ShortcutPhase) -> Void
     }
 
     private var registrations: [UInt32: Registration] = [:]
@@ -77,7 +77,7 @@ final class GlobalShortcutManager {
 
     func register(
         _ shortcut: Shortcut,
-        action: @escaping (ShortcutPhase) -> Void
+        action: @escaping @MainActor (ShortcutPhase) -> Void
     ) throws -> UInt32 {
         guard installationStatus == noErr else {
             throw Self.registrationError(for: installationStatus)
