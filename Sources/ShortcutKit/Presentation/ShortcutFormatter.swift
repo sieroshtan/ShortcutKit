@@ -10,18 +10,22 @@ public struct ShortcutFormatter: Sendable {
         self.keyFormatter = keyFormatter
     }
 
+    @MainActor
     public func string(for shortcut: Shortcut) -> String {
         components(for: shortcut).joined()
     }
 
+    @MainActor
     public func string(for state: RecordingState) -> String {
         components(for: state).joined()
     }
 
+    @MainActor
     public func components(for shortcut: Shortcut) -> [String] {
         modifierComponents(for: shortcut.modifiers) + [keyFormatter.string(for: shortcut.key)]
     }
 
+    @MainActor
     public func components(for state: RecordingState) -> [String] {
         modifierComponents(for: state.modifiers) + state.pressedKeys
             .sorted { $0.keyCode < $1.keyCode }

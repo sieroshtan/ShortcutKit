@@ -14,19 +14,19 @@ public final class ShortcutRecordingSession {
     public var policy: RecordingPolicy
 
     /// Called when the current keys or modifiers change.
-    public var onChange: ((RecordingState) -> Void)?
+    public var onChange: (@MainActor (RecordingState) -> Void)?
     /// Called for each key or modifier down and up event.
-    public var onEvent: ((RecordingEvent) -> Void)?
+    public var onEvent: (@MainActor (RecordingEvent) -> Void)?
     /// Called once for each valid key press. Repeated events are ignored.
-    public var onCommit: ((Shortcut) -> Void)?
+    public var onCommit: (@MainActor (Shortcut) -> Void)?
     /// Called when recording is cancelled.
-    public var onCancel: (() -> Void)?
+    public var onCancel: (@MainActor () -> Void)?
     /// Called when a global shortcut cannot be registered again after recording.
-    public var onRegistrationFailure: ((Shortcut, Shortcuts.RegistrationError) -> Void)?
+    public var onRegistrationFailure: (@MainActor (Shortcut, Shortcuts.RegistrationError) -> Void)?
 
     private let monitor: KeyboardEventMonitoring
     @ObservationIgnored
-    private nonisolated(unsafe) var hasSuspendedGlobalShortcuts = false
+    private var hasSuspendedGlobalShortcuts = false
 
     public convenience init(policy: RecordingPolicy = RecordingPolicy()) {
         self.init(policy: policy, monitor: KeyboardEventMonitor())

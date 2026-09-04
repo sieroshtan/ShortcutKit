@@ -36,9 +36,9 @@ public enum Shortcuts {
     }
 
     private final class ActionBox {
-        var action: (ShortcutPhase) -> Void
+        var action: @MainActor (ShortcutPhase) -> Void
 
-        init(action: @escaping (ShortcutPhase) -> Void) {
+        init(action: @escaping @MainActor (ShortcutPhase) -> Void) {
             self.action = action
         }
     }
@@ -54,7 +54,7 @@ public enum Shortcuts {
 
     /// Registers the saved or default shortcut and keeps its callback.
     @MainActor
-    public static func register(_ name: Name, action: @escaping () -> Void) throws {
+    public static func register(_ name: Name, action: @escaping @MainActor () -> Void) throws {
         try register(name, onEvent: { phase in
             if phase == .keyDown {
                 action()
@@ -65,7 +65,7 @@ public enum Shortcuts {
     @MainActor
     public static func register(
         _ name: Name,
-        onEvent: @escaping (ShortcutPhase) -> Void
+        onEvent: @escaping @MainActor (ShortcutPhase) -> Void
     ) throws {
         if let registration = namedRegistrations[name.rawValue] {
             if let id = registration.id {
@@ -86,7 +86,7 @@ public enum Shortcuts {
 
     /// Registers a shortcut without saving it.
     @MainActor
-    public static func register(_ shortcut: Shortcut, action: @escaping () -> Void) throws {
+    public static func register(_ shortcut: Shortcut, action: @escaping @MainActor () -> Void) throws {
         try register(shortcut, onEvent: { phase in
             if phase == .keyDown {
                 action()
@@ -97,7 +97,7 @@ public enum Shortcuts {
     @MainActor
     public static func register(
         _ shortcut: Shortcut,
-        onEvent: @escaping (ShortcutPhase) -> Void
+        onEvent: @escaping @MainActor (ShortcutPhase) -> Void
     ) throws {
         if let registration = inMemoryRegistrations[shortcut] {
             if let id = registration.id {
